@@ -76,6 +76,17 @@
             z-index: 1;
         }
 
+        #playLink {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
         @media(max-width:480px) {
             .countdown {
                 grid-template-columns: repeat(2, 1fr);
@@ -86,19 +97,18 @@
 
 <body>
 
-
-
-
     <canvas id="fireworks"></canvas>
 
     <div class="container">
 
-            <div class="song">
-                <video width="300px" controls loop autoplay>
-                    <source src="song.mp4">
-                </video>
-            </div>
+        <div class="song">
+            <video width="300px" controls loop autoplay muted playsinline id="myVideo">
+                <source src="song.mp4" type="video/mp4">
+            </video>
+        </div>
 
+        <!-- Link for user interaction to unmute -->
+        <a href="#" id="playLink">ចុចដើម្បីមានសំឡេង</a>
 
         <h1>🎆 Happy New Year 2026 🎆</h1>
 
@@ -126,8 +136,7 @@
                 document.getElementById("hours").innerText = 0;
                 document.getElementById("minutes").innerText = 0;
                 document.getElementById("seconds").innerText = 0;
-                document.getElementById("message").innerText =
-                    "🎉 Happy New Year 2026! 🎉";
+                document.getElementById("message").innerText = "🎉 Happy New Year 2026! 🎉";
 
                 if (!fireworksStarted) {
                     startFireworks();
@@ -149,6 +158,17 @@
 
         setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        /* VIDEO UNMUTE ON CLICK */
+        const video = document.getElementById('myVideo');
+        const link = document.getElementById('playLink');
+
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            video.muted = false;
+            video.play();
+            link.style.display = 'none'; // Hide link after click
+        });
 
         /* FIREWORKS */
         const canvas = document.getElementById("fireworks");
