@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Happy New Year 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #000428, #004e92);
+            overflow: hidden;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .box span {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .box small {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            color: #ffd700;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        @media(max-width:480px) {
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="fireworks"></canvas>
+
+    <div class="container">
+        <h1>🎆 Happy New Year 2026 🎆</h1>
+
+        <div class="countdown">
+            <div class="box"><span id="days">0</span><small>DAYS</small></div>
+            <div class="box"><span id="hours">0</span><small>HOURS</small></div>
+            <div class="box"><span id="minutes">0</span><small>MINUTES</small></div>
+            <div class="box"><span id="seconds">0</span><small>SECONDS</small></div>
+        </div>
+
+        <div class="message" id="message">Countdown to 2026 has begun</div>
+    </div>
+
+    <script>
+        /* COUNTDOWN */
+        const newYear = new Date("January 1, 2026 00:00:00").getTime();
+        let fireworksStarted = false;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const gap = newYear - now;
+
+            if (gap <= 0) {
+                document.getElementById("days").innerText = 0;
+                document.getElementById("hours").innerText = 0;
+                document.getElementById("minutes").innerText = 0;
+                document.getElementById("seconds").innerText = 0;
+                document.getElementById("message").innerText =
+                    "🎉 Happy New Year 2026! 🎉";
+
+                if (!fireworksStarted) {
+                    startFireworks();
+                    fireworksStarted = true;
+                }
+                return;
+            }
+
+            const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+            const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((gap % (1000 * 60)) / 1000);
+
+            days.innerText = d;
+            hours.innerText = h;
+            minutes.innerText = m;
+            seconds.innerText = s;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* FIREWORKS */
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function createFirework() {
+            const x = random(100, canvas.width - 100);
+            const y = random(50, canvas.height / 2);
+
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    angle: Math.random() * 2 * Math.PI,
+                    speed: random(2, 6),
+                    radius: 2,
+                    alpha: 1,
+                    color: `hsl(${Math.random() * 360},100%,60%)`
+                });
+            }
+        }
+
+        function animateFireworks() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+                p.alpha -= 0.01;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${hexToRgb(p.color)},${p.alpha})`;
+                    ctx.fill();
+                }
+            });
+
+            requestAnimationFrame(animateFireworks);
+        }
+
+        function hexToRgb(color) {
+            const temp = document.createElement("div");
+            temp.style.color = color;
+            document.body.appendChild(temp);
+            const rgb = getComputedStyle(temp).color.match(/\d+/g);
+            document.body.removeChild(temp);
+            return rgb.join(",");
+        }
+
+        function startFireworks() {
+            setInterval(createFirework, 600);
+            animateFireworks();
+        }
+
+        window.onresize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+    </script>
+
+</body>
+
+</html>
